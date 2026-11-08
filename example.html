@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Offline Reference Example</title>
+  <style>
+    :root { color-scheme:dark; --bg:#101012; --panel:#191919; --line:#393632; --gold:#d7b873; --text:#eee4cf; --muted:#aa9f89; }
+    * { box-sizing:border-box }
+    body { margin:0; color:var(--text); background:radial-gradient(ellipse at top,#30241a,#101012 68%); font:16px/1.55 Georgia,"Times New Roman",serif; }
+    .shell { width:min(1120px,calc(100% - 36px)); margin:0 auto; }
+    header { padding:48px 0 28px; border-bottom:1px solid #57452c; }
+    .eyebrow { color:var(--gold); font:700 11px/1.3 Arial,sans-serif; letter-spacing:.18em; text-transform:uppercase; }
+    h1,h2 { margin:.3em 0; font-weight:500; }
+    h1 { font-size:clamp(32px,5vw,54px); }
+    .muted { color:var(--muted); }
+    nav { display:flex; flex-wrap:wrap; gap:8px; padding:20px 0 14px; border-bottom:1px solid var(--line); }
+    button,select,input { color:var(--text); background:#171719; border:1px solid var(--line); padding:10px 13px; font:inherit; }
+    button { cursor:pointer; }
+    button[aria-selected="true"] { color:#17130d; background:var(--gold); border-color:var(--gold); }
+    .tools { display:flex; justify-content:space-between; gap:12px; padding:18px 0; }
+    input { flex:1; min-width:180px; }
+    [data-panel][hidden] { display:none; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; padding:16px 0 36px; }
+    article { min-height:128px; padding:18px; background:linear-gradient(145deg,#1c1d20,#141416); border:1px solid #353331; }
+    article h2 { color:var(--gold); font-size:22px; }
+    footer { padding:20px 0 48px; color:var(--muted); border-top:1px solid var(--line); font-size:13px; }
+    @media(max-width:600px) { .tools { flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="eyebrow">Offline Reference Example</div>
+    <h1>A mod creator’s field guide</h1>
+    <p class="muted">A small, self-contained HTML page to demonstrate the in-game browser panel. Replace this file with your own guide or database.</p>
+  </header>
+  <main class="shell">
+    <nav aria-label="Sections" role="tablist">
+      <button class="tab" data-tab="mod" aria-selected="true">Overview</button>
+      <button class="tab" data-tab="uniques" aria-selected="false">Items</button>
+      <button class="tab" data-tab="sets" aria-selected="false">Sets</button>
+      <button class="tab" data-tab="runewords" aria-selected="false">Runewords</button>
+      <button class="tab" data-tab="cube" aria-selected="false">Recipes</button>
+      <button class="tab" data-tab="art" aria-selected="false">Notes</button>
+    </nav>
+    <div class="tools">
+      <input id="global-search" type="search" placeholder="Search this section…" aria-label="Search">
+      <select id="sort-list" aria-label="Sort entries">
+        <option value="default">Default order</option>
+        <option value="alphabetical">Alphabetical</option>
+      </select>
+    </div>
+    <section data-panel="mod">
+      <div class="grid">
+        <article><div class="eyebrow">Getting started</div><h2>One local HTML file</h2><p>Keep the page beside the plugin DLL or point <code>html_file</code> to another local path in the plugin TOML.</p></article>
+        <article><div class="eyebrow">Offline by design</div><h2>Bring your own content</h2><p>HTML, CSS, JavaScript, and local images can make a searchable guide that works without a web connection.</p></article>
+        <article><div class="eyebrow">Customization</div><h2>Make it yours</h2><p>Use your mod’s colors and data, then connect a button in your layout to open the browser panel.</p></article>
+      </div>
+    </section>
+    <section data-panel="uniques" hidden><div class="grid">
+      <article><div class="eyebrow">Example item</div><h2>Emberguard</h2><p>A sample entry for a unique shield. Add properties, drop notes, and images here.</p></article>
+      <article><div class="eyebrow">Example item</div><h2>Moonlit Edge</h2><p>A sample entry for a rare blade. Search and section switching work with ordinary HTML.</p></article>
+    </div></section>
+    <section data-panel="sets" hidden><div class="grid"><article><div class="eyebrow">Example set</div><h2>Wayfarer’s Oath</h2><p>Describe set pieces and bonuses in a compact card or link to a detailed entry.</p></article></div></section>
+    <section data-panel="runewords" hidden><div class="grid"><article><div class="eyebrow">Example runeword</div><h2>Stillwater</h2><p>List its required sockets, sequence, and effect using the format your players know.</p></article></div></section>
+    <section data-panel="cube" hidden><div class="grid"><article><div class="eyebrow">Example recipe</div><h2>Combine fragments</h2><p>Show ingredients and results for a crafting or upgrade recipe.</p></article></div></section>
+    <section data-panel="art" hidden><div class="grid"><article><div class="eyebrow">Example note</div><h2>Mod reference</h2><p>Use this section for patch notes, asset details, or other local documentation.</p></article></div></section>
+  </main>
+  <footer class="shell">Replace this sample with your own offline reference page.</footer>
+  <script>
+    const buttons = [...document.querySelectorAll('.tab[data-tab]')];
+    const panels = [...document.querySelectorAll('[data-panel]')];
+    const search = document.getElementById('global-search');
+    const sort = document.getElementById('sort-list');
+    function showTab(name) {
+      buttons.forEach(button => button.setAttribute('aria-selected', String(button.dataset.tab === name)));
+      panels.forEach(panel => { panel.hidden = panel.dataset.panel !== name; });
+      filterEntries();
+    }
+    function filterEntries() {
+      const query = search.value.trim().toLowerCase();
+      const active = panels.find(panel => !panel.hidden);
+      if (!active) return;
+      const grid = active.querySelector('.grid');
+      const entries = [...active.querySelectorAll('article')];
+      entries.forEach(entry => { entry.hidden = query !== '' && !entry.textContent.toLowerCase().includes(query); });
+      if (sort.value === 'alphabetical' && grid) entries.sort((a,b) => a.textContent.localeCompare(b.textContent)).forEach(entry => grid.append(entry));
+    }
+    buttons.forEach(button => button.addEventListener('click', () => showTab(button.dataset.tab)));
+    search.addEventListener('input', filterEntries);
+    sort.addEventListener('change', filterEntries);
+  </script>
+</body>
+</html>

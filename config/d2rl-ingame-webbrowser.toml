@@ -1,0 +1,5 @@
+# HTML page shown inside the in-game browser panel.
+# Relative paths are resolved from the folder containing d2rl-ingame-webbrowser.dll.
+# Absolute Windows paths can use TOML literal strings to keep normal backslashes:
+# html_file = 'E:\mods\MyMod\d2rloader\plugins\page.html'
+html_file = "example.html"

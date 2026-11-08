@@ -1,0 +1,34 @@
+#include <D2RLPlugin/resource.h>
+#include <D2RLPlugin/version.h>
+
+#define WEBBROWSER_BROWSER_PANEL_LAYOUT_RESOURCE_ID 2001
+#define WEBBROWSER_OPEN_EXTERNAL_BUTTON_RESOURCE_ID 2002
+#define WEBBROWSER_OPEN_EXTERNAL_BUTTON_LOWEND_RESOURCE_ID 2003
+
+D2RL_PLUGIN_MANIFEST_RESOURCE_ID RCDATA { D2RL_PLUGIN_RESOURCE_DWORD(D2RL_PLUGIN_ABI_VERSION) }
+WEBBROWSER_BROWSER_PANEL_LAYOUT_RESOURCE_ID RCDATA "../layout/BrowserPanelhd.json"
+WEBBROWSER_OPEN_EXTERNAL_BUTTON_RESOURCE_ID RCDATA "../assets/native/open-external-button.sprite"
+WEBBROWSER_OPEN_EXTERNAL_BUTTON_LOWEND_RESOURCE_ID RCDATA "../assets/native/open-external-button.lowend.sprite"
+
+1 VERSIONINFO
+FILEVERSION 0,2,36,0
+PRODUCTVERSION 0,2,36,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName", "MadMike"
+      VALUE "FileDescription", "Shows a configured local HTML page in-game or in the default browser."
+      VALUE "FileVersion", "0.2.36"
+      VALUE "InternalName", "d2rl-ingame-webbrowser"
+      VALUE "OriginalFilename", "d2rl-ingame-webbrowser.dll"
+      VALUE "ProductName", "Webbrowser In-Game Plugin"
+      VALUE "ProductVersion", "0.2.36"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 1200
+  END
+END

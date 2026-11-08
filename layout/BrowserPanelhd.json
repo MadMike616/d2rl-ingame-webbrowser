@@ -1,0 +1,77 @@
+{
+  "type": "Panel",
+  "name": "d2rl-ingame-webbrowser/BrowserPanel",
+  "fields": {
+    "priority": 9100,
+    "fitToParent": true
+  },
+  "children": [
+    {
+      "type": "RectangleWidget",
+      "name": "ModalBackground",
+      "fields": {
+        "fitToScreen": true,
+        "color": [ 0.0, 0.0, 0.0, 0.7 ]
+      },
+      "children": [
+        {
+          "type": "ClickCatcherWidget",
+          "name": "ModalClickCatcher",
+          "fields": { "fitToParent": true }
+        },
+        {
+          "type": "Widget",
+          "name": "PanelAnchor",
+          "fields": {
+            "anchor": { "x": 0.5, "y": 0.5 },
+            "rect": "$SettingsPanelAnchorRect"
+          },
+          "children": [
+            {
+              "type": "ImageWidget",
+              "name": "NativeOptionsBackground",
+              "fields": {
+                "filename": "PANEL\\Options\\FrontEndOptionsBG"
+              }
+            },
+            {
+              "type": "TextBoxWidget",
+              "name": "Title",
+              "fields": {
+                "rect": { "x": 0, "y": 45, "width": 1950, "height": 103 },
+                "text": "Mod Browser",
+                "style": "$StyleTitleBlock"
+              }
+            },
+            {
+              "type": "ButtonWidget",
+              "name": "OpenExternalButton",
+              "fields": {
+                "rect": { "x": 150, "y": 66, "width": 74, "height": 62 },
+                "filename": "d2rloader/d2rl-ingame-webbrowser/open-external-button",
+                "normalFrame": 0,
+                "hoveredFrame": 1,
+                "pressedFrame": 2,
+                "disabledFrame": 3,
+                "onClickMessage": "PanelManager:ClosePanel:OpenExternalPage",
+                "tooltipString": "Open in your default browser"
+              }
+            },
+            {
+              "type": "ButtonWidget",
+              "name": "CloseButton",
+              "fields": {
+                "rect": { "x": 1868, "y": 8 },
+                "filename": "PANEL\\closebtn_4x",
+                "hoveredFrame": 3,
+                "onClickMessage": "PanelManager:ClosePanel:d2rl-ingame-webbrowser/BrowserPanel",
+                "tooltipString": "@d2r:strClose",
+                "sound": "cursor_close_window_hd"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
