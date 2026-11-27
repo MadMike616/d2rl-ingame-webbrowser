@@ -6,9 +6,9 @@
 |---|---|
 | Plugin name | Webbrowser In-Game Plugin |
 | Plugin ID | d2rl-ingame-webbrowser |
-| Release version | 0.2.36 |
-| Inventory updated | 2026-11-08 |
-| Source revision | v0.2.36 release source |
+| Release version | 1.2.36 |
+| Inventory updated | 2026-11-27 |
+| Source revision | v1.2.36 release source |
 | D2R build(s) audited | Not validated |
 | D2RLoader SDK / Plugin ABI | PluginSDK 0.4.0 / Plugin ABI 4 |
 | Audit status | Complete |
@@ -32,3 +32,5 @@ Inspected `src/plugin.cpp`, `src/cef_client.cpp`, `src/plugin.rc`, and `CMakeLis
 ## Audit notes
 
 No native executable hook, patch, vtable replacement, or shared native-slot replacement was found. The hook site is unchanged from v0.2.35. Source audit is complete; in-game validation of v0.2.36 was not performed.
+
+Release 1.2.36 source review: TOML installation completion and configuration mirroring add no native hook, patch, vtable, or OS input-hook targets. Hook-site changes since the previous release: none. Startup completion was checked in the testing environment; the existing native validation limits above still apply.

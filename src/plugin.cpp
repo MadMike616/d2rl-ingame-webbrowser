@@ -1,3 +1,4 @@
+#include "install_token.hpp"
 #include <D2RLPlugin/api.h>
 #include <D2RLPlugin/logging.h>
 #include <D2RLPlugin/panels.h>
@@ -26,6 +27,7 @@
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 namespace {
+
 
 constexpr std::uint16_t BrowserPanelLayoutResourceId = 2001;
 constexpr std::uint16_t OpenExternalButtonResourceId = 2002;
@@ -93,7 +95,7 @@ constexpr D2RL::PluginInfo Info{
     .abiVersion = D2RL_PLUGIN_ABI_VERSION,
     .id = PluginId,
     .name = "Webbrowser In-Game Plugin",
-    .version = "0.2.36",
+    .version = "1.2.36",
     .author = "MadMike",
     .description = "Opens a configured local HTML page in-game or in the default browser.",
     .flags = D2RL::PluginFlags::Client,
@@ -336,9 +338,15 @@ bool LoadBrowserPanelLayoutFile(std::vector<std::uint8_t>& bytes) noexcept {
             return false;
         }
 
+        const InstallToken::Lock installLock;
+        const bool installed=InstallToken::Complete(*Context);
         const auto pluginPath = std::filesystem::path(pluginDirectory);
         const auto layoutPath = (pluginPath / BrowserPanelLayoutFileName).wstring();
         if (!IsFile(layoutPath)) {
+            if (installed) {
+                Context->LogError("WebbrowserInGame: installed BrowserPanelhd.json is missing; restore it or set installation.complete = false to recreate it.");
+                return false;
+            }
             std::vector<std::uint8_t> defaultBytes;
             if (!LoadEmbeddedLayout(BrowserPanelLayoutResourceId, defaultBytes)
                 || defaultBytes.empty()
@@ -385,6 +393,7 @@ bool LoadBrowserPanelLayoutFile(std::vector<std::uint8_t>& bytes) noexcept {
                 "WebbrowserInGame: BrowserPanelhd.json could not be read or exceeds 4 MiB.");
             return false;
         }
+        if (!installed) InstallToken::Commit(*Context);
         return true;
     } catch (...) {
         Context->LogError(
@@ -652,8 +661,6 @@ bool InstallBrowserEscapeHook() noexcept {
     }
     BrowserEscapeActive.store(true, std::memory_order_release);
     if (Context) {
-        Context->LogInfo(
-            "WebbrowserInGame: installed a thread-scoped Escape filter while CEF is open.");
     }
     return true;
 }
@@ -765,7 +772,6 @@ LRESULT CALLBACK EscapeMessageWindowProc(
                 QueueBrowserClose();
             } else if (Context) {
                 BrowserPanelOpen = true;
-                Context->LogInfo("WebbrowserInGame: SDK opened the native panel.");
             }
         }
         return 0;
@@ -799,7 +805,6 @@ LRESULT CALLBACK EscapeMessageWindowProc(
             BrowserControlWindow = controlWindow;
             BrowserReady = true;
             if (Context) {
-                Context->LogInfo("WebbrowserInGame: CEF close control connected.");
             }
             BringBrowserForward();
             if (BrowserCloseRequested) RequestBrowserClose();
@@ -1008,7 +1013,6 @@ bool LaunchBrowser() {
         RequestBrowserClose();
         return false;
     }
-    Context->LogInfo("WebbrowserInGame: opened the configured HTML page in the native-style panel.");
     if (SetTimer(EscapeMessageWindow, BrowserCloseRetryTimerId, 100, nullptr) == 0) {
         Context->LogWarn(
             "WebbrowserInGame: could not start browser and panel lifecycle monitoring.");
@@ -1065,8 +1069,6 @@ auto __cdecl OnButtonMessage(
             }
             if (info.presentationState == D2RL::Panels::PresentationState::Open) {
                 QueueBrowserClose();
-                Context->LogInfo(
-                    "WebbrowserInGame: consumed panel toggle and queued ordered CEF/panel shutdown.");
                 return D2RL::SharedEvents::UiMessageAction::Consume;
             } else if (!EnsureEscapeMessageWindow() || !LaunchBrowser()) {
                 return D2RL::SharedEvents::UiMessageAction::Consume;
@@ -1170,8 +1172,6 @@ void RequestBrowserClose() noexcept {
                     BrowserControlWindow, CefCloseBrowserMessage, 0, 0)) {
                 BrowserCloseMessageSent = true;
                 if (Context) {
-                    Context->LogInfo(
-                        "WebbrowserInGame: sent graceful CEF CloseBrowser request.");
                 }
             }
         }
@@ -1215,8 +1215,6 @@ void CloseNativeBrowserPanel() noexcept {
     if (result == D2RL::Panels::Result::Success) {
         BrowserPanelOpen = false;
         if (Context) {
-            Context->LogInfo(
-                "WebbrowserInGame: closed the native panel after CEF exited.");
         }
     } else if (Context) {
         Context->LogWarn(
@@ -1472,7 +1470,7 @@ D2RL_PLUGIN_EXPORT auto D2RLoaderLoadPlugin(
     }
 
     context->LogInfo(
-        "Webbrowser In-Game Plugin 0.2.36 loaded; the browser panel is ready.");
+        "Webbrowser In-Game Plugin 1.2.36 loaded; the browser panel is ready.");
     return true;
 }
 

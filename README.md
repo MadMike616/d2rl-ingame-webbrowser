@@ -58,7 +58,7 @@ html_file = "example.html"
 Relative paths resolve from the folder containing the plugin DLL. Absolute Windows paths can use a TOML literal string to preserve backslashes:
 
 ```toml
-html_file = 'E:\mods\MyMod\mod-guide.html'
+html_file = 'C:\ModContent\mod-guide.html'
 ```
 
 ## Build
@@ -83,3 +83,12 @@ Copy the plugin DLL, the HTML page configured by `html_file`, and the entire `CE
 ## Licenses
 
 The plugin source is licensed under the MIT License. Third-party licenses and notices are included with the corresponding packages and summarized in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+
+## Installation completion
+
+After successful first-run setup, the plugin records a completion token in its TOML configuration. Later launches skip that completed setup and preserve existing files and settings. Failed setup remains retryable.
+
+The completion token covers creation of `BrowserPanelhd.json` beside the DLL. If that layout is removed after setup, restore it or reset the token to recreate it.
+
+To rerun setup intentionally, close the game and set `complete = false` in the relevant token section (`[installation]` by default).

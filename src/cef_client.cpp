@@ -17,6 +17,7 @@
 
 namespace {
 
+
 std::wstring GetExecutablePath() {
     std::vector<wchar_t> path(32768);
     const auto count = GetModuleFileNameW(
@@ -529,14 +530,11 @@ bool ParseIntegerSwitch(
 }
 
 int RunBrowser(HINSTANCE instance, void* sandboxInfo) {
-    WriteStartupLog("RunWinMain entered.");
     CefMainArgs mainArgs(instance);
     const auto subprocessExitCode = CefExecuteProcess(mainArgs, nullptr, sandboxInfo);
     if (subprocessExitCode >= 0) {
-        WriteStartupLog("CefExecuteProcess handled a CEF subprocess.");
         return subprocessExitCode;
     }
-    WriteStartupLog("CefExecuteProcess returned -1; continuing as browser process.");
 
     CefRefPtr<CefCommandLine> commandLine = CefCommandLine::CreateCommandLine();
     commandLine->InitFromString(GetCommandLineW());
@@ -604,7 +602,7 @@ int RunBrowser(HINSTANCE instance, void* sandboxInfo) {
                 = resourcesPath + L"\\cef-debug.log";
         }
     }
-    settings.log_severity = LOGSEVERITY_INFO;
+    settings.log_severity = LOGSEVERITY_WARNING;
 
     CefRefPtr<BrowserApp> app(new BrowserApp(
         initialUrl, parentWindow, escapeMessageWindow, browserBounds));
@@ -613,7 +611,6 @@ int RunBrowser(HINSTANCE instance, void* sandboxInfo) {
         return CefGetExitCode();
     }
 
-    WriteStartupLog("CefInitialize succeeded; starting browser message loop.");
     CefRunMessageLoop();
     CefShutdown();
     return 0;
